@@ -21,7 +21,18 @@ extension Strings {
 
       do {
         self.document = try JSONDecoder().decode(Document.self, from: data)
-      } catch let error {
+      } catch let DecodingError.dataCorrupted(context) {
+        throw ParserError.invalidFormat(reason: context.debugDescription)
+      } catch let DecodingError.keyNotFound(key, context) {
+        let message = "Key '\(key)' not found:\(context.debugDescription)\ncodingPath:\(context.codingPath)"
+        throw ParserError.invalidFormat(reason: message)
+      } catch let DecodingError.valueNotFound(value, context) {
+        let message = "Value '\(value)' not found:\(context.debugDescription)\ncodingPath:\(context.codingPath)"
+        throw ParserError.invalidFormat(reason: message)
+      } catch let DecodingError.typeMismatch(type, context)  {
+        let message = "Type '\(type)' mismatch:\(context.debugDescription)\ncodingPath:\(context.codingPath)"
+        throw ParserError.invalidFormat(reason: message)
+      } catch {
         throw ParserError.invalidFormat(reason: error.localizedDescription)
       }
     }
@@ -34,7 +45,7 @@ extension Strings {
 
   struct StringCatalogEntry: Decodable {
     let comment: String?
-    let localizations: [String: Localization]
+    let localizations: [String: Localization]?
   }
 
   struct Localization: Decodable {
