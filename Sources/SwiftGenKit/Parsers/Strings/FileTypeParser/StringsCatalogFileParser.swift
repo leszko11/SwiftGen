@@ -28,7 +28,7 @@ extension Strings {
 
       do {
         return try file.document.strings.compactMap { key, entry -> Strings.Entry? in
-          guard let localization = entry.localizations[sourceLanguage] else {
+          guard let localization = entry.localizations?[sourceLanguage] else {
             return nil
           }
           var stringEntry = Strings.Entry(

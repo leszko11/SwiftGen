@@ -45,7 +45,7 @@ extension Strings {
 
   struct StringCatalogEntry: Decodable {
     let comment: String?
-    let localizations: [String: Localization]
+    let localizations: [String: Localization]?
   }
 
   struct Localization: Decodable {
