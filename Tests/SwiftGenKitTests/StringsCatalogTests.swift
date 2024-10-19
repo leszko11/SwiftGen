@@ -65,4 +65,12 @@ class StringsCatalogTests: XCTestCase {
     let result = parser.stencilContext()
     XCTDiffContexts(result, expected: "plurals", sub: .stringsCatalog)
   }
+
+  func testAdvancedPlurals() throws {
+    let parser = try Strings.Parser()
+    try parser.searchAndParse(path: Fixtures.resource(for: "LocPluralAdvanced.xcstrings", sub: .stringsCatalog))
+
+    let result = parser.stencilContext()
+    XCTDiffContexts(result, expected: "plurals-advanced", sub: .stringsCatalog)
+  }
 }
