@@ -68,12 +68,12 @@ final class StringsCatalogTests: XCTestCase {
     )
   }
 
-//  func testStructuredSwift5() {
-//    test(
-//      template: "structured-swift5",
-//      contextNames: Contexts.all,
-//      directory: .strings,
-//      contextVariations: variations
-//    )
-//  }
+  func testStructuredSwift5() {
+    test(
+      template: "structured-swift5",
+      contextNames: Contexts.all,
+      directory: .stringsCatalog,
+      contextVariations: variations
+    )
+  }
 }

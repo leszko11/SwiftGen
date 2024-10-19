@@ -41,12 +41,12 @@ import Foundation
   {% set translation string.translation|replace:'"','\"'|replace:'	','\t' %}
   {% if string.types %}
   {{accessModifier}} static func {{string.key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}({% call parametersBlock string.types %}) -> String {
-    return {{enumName}}.tr("{{table}}", "{{string.key}}", {%+ call argumentsBlock string.types %}, fallback: "{{translation}}")
+    return {{enumName}}.tr("{{table}}", "{{string.key}}", {%+ call argumentsBlock string.types %})
   }
   {% elif param.lookupFunction %}
-  {{accessModifier}} static var {{string.key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}: String { return {{enumName}}.tr("{{table}}", "{{string.key}}", fallback: "{{translation}}") }
+  {{accessModifier}} static var {{string.key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}: String { return {{enumName}}.tr("{{table}}", "{{string.key}}") }
   {% else %}
-  {{accessModifier}} static let {{string.key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}} = {{enumName}}.tr("{{table}}", "{{string.key}}", fallback: "{{translation}}")
+  {{accessModifier}} static let {{string.key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}} = {{enumName}}.tr("{{table}}", "{{string.key}}")
   {% endif %}
   {% endfor %}
   {% for child in item.children %}
@@ -71,13 +71,34 @@ import Foundation
 // MARK: - Implementation Details
 
 extension {{enumName}} {
-  private static func tr(_ table: String, _ key: String, _ args: CVarArg..., fallback value: String) -> String {
-    {% if param.lookupFunction %}
-    let format = {{ param.lookupFunction }}(key, table, value)
-    {% else %}
-    let format = {{param.bundle|default:"BundleToken.bundle"}}.localizedString(forKey: key, value: value, table: table)
-    {% endif %}
-    return String(format: format, locale: Locale.current, arguments: args)
+  private static func tr(_ table: String, _ key: StaticString, _ args: CVarArg...) -> String {
+    return String(
+      localized: key,
+      defaultValue: defaultValue(key, args),
+      table: table,
+      bundle: {{param.bundle|default:"BundleToken.bundle"}},
+      locale: Locale.current
+    )
+  }
+
+  private static func defaultValue(_ key: StaticString,
+                                    _ args: CVarArg...) -> String.LocalizationValue {
+    var stringInterpolation = String.LocalizationValue.StringInterpolation(literalCapacity: 0, interpolationCount: args.count)
+    args.forEach { stringInterpolation.appendInterpolation(arg: $0) }
+    return .init(stringInterpolation: stringInterpolation)
+  }
+}
+
+private extension String.LocalizationValue.StringInterpolation {
+  mutating func appendInterpolation(arg: CVarArg) {
+    switch arg {
+    case let arg as String: appendInterpolation(arg)
+    case let arg as Int: appendInterpolation(arg)
+    case let arg as UInt: appendInterpolation(arg)
+    case let arg as Double: appendInterpolation(arg)
+    case let arg as Float: appendInterpolation(arg)
+    default: return
+    }
   }
 }
 {% if not param.bundle and not param.lookupFunction %}
@@ -95,6 +116,6 @@ private final class BundleToken {
 // swiftlint:enable convenience_type
 {% endif %}
 {% else %}
-// No string found
+// No strings catalog found
 {% endif %}
 // swiftlint:enable all

@@ -7,26 +7,40 @@ import Foundation
 
 // MARK: - Strings
 
-// swiftlint:disable function_parameter_count identifier_name line_length type_body_length
+// swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
+// swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum L10n {
-  /// Plural format key: apples.count
-  internal static func applesCount(_ p1: Int) -> String {
-    return L10n.tr("LocalizableDict", "apples.count", p1)
+  internal enum Apples {
+    /// Plural format key: apples.count
+    internal static func count(_ p1: Int) -> String {
+      return L10n.tr("LocalizableDict", "apples.count", p1)
+    }
   }
-  /// Plural format key: competition.event.number-of-matches
-  internal static func competitionEventNumberOfMatches(_ p1: Int) -> String {
-    return L10n.tr("LocalizableDict", "competition.event.number-of-matches", p1)
+  internal enum Competition {
+    internal enum Event {
+      /// Plural format key: competition.event.number-of-matches
+      internal static func numberOfMatches(_ p1: Int) -> String {
+        return L10n.tr("LocalizableDict", "competition.event.number-of-matches", p1)
+      }
+    }
+    internal enum Tab {
+      /// Key: competition.tab.favorite-players
+      internal static let favoritePlayers = L10n.tr("LocalizableDict", "competition.tab.favorite-players")
+      /// Key: competition.tab.favorite-teams
+      internal static let favoriteTeams = L10n.tr("LocalizableDict", "competition.tab.favorite-teams")
+    }
   }
-  /// Key: competition.tab.favorite-players
-  internal static let competitionTabFavoritePlayers = L10n.tr("LocalizableDict", "competition.tab.favorite-players")
-  /// Key: competition.tab.favorite-teams
-  internal static let competitionTabFavoriteTeams = L10n.tr("LocalizableDict", "competition.tab.favorite-teams")
-  /// Plural format key: feed.subscription.count
-  internal static func feedSubscriptionCount(_ p1: Int) -> String {
-    return L10n.tr("LocalizableDict", "feed.subscription.count", p1)
+  internal enum Feed {
+    internal enum Subscription {
+      /// Plural format key: feed.subscription.count
+      internal static func count(_ p1: Int) -> String {
+        return L10n.tr("LocalizableDict", "feed.subscription.count", p1)
+      }
+    }
   }
 }
-// swiftlint:enable function_parameter_count identifier_name line_length type_body_length
+// swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
+// swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces
 
 // MARK: - Implementation Details
 
